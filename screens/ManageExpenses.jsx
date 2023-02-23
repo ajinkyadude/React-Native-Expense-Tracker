@@ -1,10 +1,12 @@
 import { useContext, useLayoutEffect } from "react";
-import Button from "../components/UI/Button";
+import ExpenseForm from "../components/Expense Manage/ExpenseForm";
+
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constant/Style";
 import { ExpensesContext } from "../store/expenses-context";
+import { View, StyleSheet, Text } from "react-native";
 
-const { Text, View, StyleSheet } = require("react-native")
+// const { Text, View, StyleSheet } = require("react-native")
 
 const ManageExpense = ({ route, navigation }) => {
 
@@ -12,6 +14,10 @@ const ManageExpense = ({ route, navigation }) => {
 
     const editedExpenseId = route.params?.expenseId;
     const isEdition = !!editedExpenseId;
+
+    const selectedExpenses=expensesCtx.expenses.find(
+        (expense)=> expense.id === editedExpenseId
+        )
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -26,23 +32,24 @@ const ManageExpense = ({ route, navigation }) => {
     const cancleHandler=()=>{
         navigation.goBack();
     }
-    const confirmHandler=()=>{
+    const confirmHandler=(expenseData)=>{
 
         if(isEdition){
             expensesCtx.updateExpense(
-                editedExpenseId,
-                {
-                description: 'Test!!!!!!',
-                amount: 19.12,
-                date: new Date('2023-02-21')
-            });
+                editedExpenseId,expenseData
+            //     {
+            //     description: 'Test!!!!!!',
+            //     amount: 19.12,
+            //     date: new Date('2023-02-21')
+            // }
+            );
         }
         else{
-            expensesCtx.addExpense({
-                description: 'Test',
-                amount: 19.99,
-                date: new Date('2022-05-19')
-            });
+            expensesCtx.addExpense(expenseData
+                // description: 'Test',
+                // amount: 19.99,
+                // date: new Date('2022-05-19')
+            );
         }
 
         navigation.goBack();
@@ -51,10 +58,13 @@ const ManageExpense = ({ route, navigation }) => {
     return (
 
         <View style={styles.conatiner}>
-            <View style={styles.buttons}>
-                <Button style={styles.button} mode='flat' onPress={cancleHandler}>Cancle</Button>
-                <Button style={styles.button} onPress={confirmHandler}>{isEdition ? 'Update' : 'Add'}</Button>
-            </View>
+            <ExpenseForm 
+            onCancle={cancleHandler}
+            onSubmit={confirmHandler}
+            submitButtonLabel={isEdition ? 'Update' : 'Add'}
+            defaultValue={selectedExpenses}
+            />
+
             {isEdition && <View style={styles.deleteContainer}><IconButton icon="trash" color={GlobalStyles.colors.error500} size={24} onPress={deleteExpenseHandler} /></View>}
         </View>
     )
@@ -75,13 +85,5 @@ const styles = StyleSheet.create({
         borderTopColor: GlobalStyles.colors.primary200,
         alignItems: 'center'
     },
-    buttons:{
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    button:{
-        minWidth: 120,
-        marginHorizontal: 8
-    }
+  
 })
