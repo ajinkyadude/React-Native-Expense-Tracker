@@ -37,6 +37,7 @@ function ExpensesOverView() {
         title: 'Recent Expenses',
         tabBarLabel: "Recent"
       }} />
+      
       <BottomTabs.Screen name='AllExpenses' component={AllExpenses} options={{
         title: 'All Expenses',
         tabBarLabel: "All Expenses"
